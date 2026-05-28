@@ -1,38 +1,63 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route
-} from "react-router-dom";
+import "./App.css";
+
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import { useState } from "react";
 
 import Home from "./pages/Home";
-import Movies from "./pages/Movies";
-import About from "./pages/About";
+import Favorites from "./pages/Favorites";
+import Login from "./pages/Login";
+
+import Navbar from "./components/Navbar";
 
 function App() {
-  return (
-      <BrowserRouter>
 
-        <Routes>
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-          <Route
-              path="/"
-              element={<Home />}
-          />
+    return (
 
-          <Route
-              path="/movies"
-              element={<Movies />}
-          />
+        <BrowserRouter>
 
-          <Route
-              path="/about"
-              element={<About />}
-          />
+            {isLoggedIn && (
+                <Navbar
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                />
+            )}
 
-        </Routes>
+            <Routes>
 
-      </BrowserRouter>
-  );
+                <Route
+                    path="/login"
+                    element={
+                        <Login
+                            setIsLoggedIn={setIsLoggedIn}
+                        />
+                    }
+                />
+
+                <Route
+                    path="/"
+                    element={
+                        isLoggedIn
+                            ? <Home />
+                            : <Navigate to="/login" />
+                    }
+                />
+
+                <Route
+                    path="/favorites"
+                    element={
+                        isLoggedIn
+                            ? <Favorites />
+                            : <Navigate to="/login" />
+                    }
+                />
+
+            </Routes>
+
+        </BrowserRouter>
+    );
 }
 
 export default App;

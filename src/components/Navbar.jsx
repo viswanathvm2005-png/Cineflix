@@ -1,23 +1,49 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
-function Navbar() {
+function Navbar({ isLoggedIn, setIsLoggedIn }) {
+
+    const navigate = useNavigate();
+
+    const location = useLocation();
+
+    const handleLogout = () => {
+
+        setIsLoggedIn(false);
+
+        navigate("/login");
+    };
+
     return (
-        <nav>
+
+        <nav className="navbar">
+
             <h1>CineFlix</h1>
 
-            <ul>
-                <li>
-                    <Link to="/">Home</Link>
-                </li>
+            <div className="nav-links">
 
-                <li>
-                    <Link to="/movies">Movies</Link>
-                </li>
+                <Link to="/">Home</Link>
 
-                <li>
-                    <Link to="/about">About</Link>
-                </li>
-            </ul>
+                {
+                    location.pathname !== "/favorites" && (
+                        <Link to="/favorites">
+                            Favorites
+                        </Link>
+                    )
+                }
+
+                {
+                    isLoggedIn && (
+                        <button
+                            className="logout-btn"
+                            onClick={handleLogout}
+                        >
+                            Logout
+                        </button>
+                    )
+                }
+
+            </div>
+
         </nav>
     );
 }
