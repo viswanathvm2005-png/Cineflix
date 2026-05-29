@@ -1,67 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Home() {
 
     // FAVORITES STATE
 
-    const [favorites, setFavorites] = useState(
-
-        JSON.parse(localStorage.getItem("favorites")) || []
-
-    );
-
-    // SEARCH STATE
-
+    const [favorites, setFavorites] = useState([]);
     const [search, setSearch] = useState("");
+    const [movies, setMovies] = useState([]);
+
+    useEffect(() => {
+
+        const savedFavorites =
+
+            JSON.parse(localStorage.getItem("favorites")) || [];
+
+        setFavorites(savedFavorites);
+
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem(
+            "favorites",
+            JSON.stringify(favorites)
+        );
+    }, [favorites]);
+
+    const API_KEY = "713dac07495bb378f22ea98484e8eef1";
+
+    const fetchMovies = async () => {
+
+        try {
+            const response = await fetch(
+                `https://api.themoviedb.org/3/trending/movie/week?api_key=${API_KEY}`
+            );
+            const data = await response.json();
+            setMovies(data.results);
+        }
+
+        catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        fetchMovies();
+    }, []);
 
     const [selectedMovie, setSelectedMovie] = useState(null);
-
-    // MOVIES DATA
-
-    const movies = [
-
-        {
-            id: 1,
-            title: "Avengers",
-            image:
-                "https://images.unsplash.com/photo-1635865165118-917ed9e20936",
-
-            year: "2019",
-
-            rating: "9.2",
-
-            description:
-                "Superheroes unite to save the universe."
-        },
-
-        {
-            id: 2,
-            title: "Batman",
-            image:
-                "https://images.unsplash.com/photo-1531259683007-016a7b628fc3",
-        },
-
-        {
-            id: 3,
-            title: "Spider-Man",
-            image:
-                "https://images.unsplash.com/photo-1635805737707-575885ab0820",
-        },
-
-        {
-            id: 4,
-            title: "Joker",
-            image:
-                "https://images.unsplash.com/photo-1608889825205-eebdb9fc5806",
-        },
-    ];
 
     // SEARCH FILTER
 
     const filteredMovies = movies.filter((movie) =>
 
         movie.title
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(search.toLowerCase())
 
     );
@@ -99,12 +91,6 @@ function Home() {
             ];
         }
 
-        localStorage.setItem(
-
-            "favorites",
-            JSON.stringify(updatedFavorites)
-
-        );
 
         setFavorites(updatedFavorites);
     };
@@ -169,7 +155,7 @@ function Home() {
                             >
 
                                 <img
-                                    src={movie.image}
+                                    src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                                     alt={movie.title}
                                 />
 
@@ -179,9 +165,10 @@ function Home() {
 
                                 <button
                                     className="fav-btn"
-                                    onClick={() =>
-                                        addFavorite(movie)
-                                    }
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        addFavorite(movie);
+                                    }}
                                 >
 
                                     {
@@ -250,6 +237,43 @@ function Home() {
                                 onClick={() =>
                                     setSelectedMovie(null)
                                 }
+                            >
+                                Close
+                            </button>
+
+                        </div>
+
+                    </div>
+                )
+            }
+            {
+                selectedMovie && (
+
+                    <div
+                        className="modal-overlay"
+                        onClick={() => setSelectedMovie(null)}
+                    >
+
+                        <div
+                            className="movie-modal"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+
+                            <img
+                                src={selectedMovie.image}
+                                alt={selectedMovie.title}
+                            />
+
+                            <h2>{selectedMovie.title}</h2>
+
+                            <p>⭐ Rating: {selectedMovie.rating}</p>
+
+                            <p>📅 Year: {selectedMovie.year}</p>
+
+                            <p>{selectedMovie.description}</p>
+
+                            <button
+                                onClick={() => setSelectedMovie(null)}
                             >
                                 Close
                             </button>

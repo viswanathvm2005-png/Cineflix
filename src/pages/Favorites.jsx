@@ -19,26 +19,22 @@ function Favorites() {
 
             <h1>Favorite Movies</h1>
 
-            <div className="movies">
+            <div className="favorites-grid">
 
-                {
-                    favorites.map((movie) => (
+                {favorites.map((movie) => (
 
-                        <div
-                            className="movie-card"
-                            key={movie.id}
-                        >
+                    <div className="favorite-card" key={movie.id}>
 
-                            <img
-                                src={movie.image}
-                                alt={movie.title}
-                            />
+                        <img
+                            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                            alt={movie.title}
+                        />
 
-                            <h3>{movie.title}</h3>
+                        <h3>{movie.title}</h3>
 
-                        </div>
-                    ))
-                }
+                    </div>
+
+                ))}
 
             </div>
 

@@ -54,7 +54,12 @@ function Login({ setIsLoggedIn }) {
 
     return (
 
-        <div className="login-container">
+        <>
+            <div className="login-title">
+                <h1>CineFlix</h1>
+            </div>
+
+            <div className="login-container">
 
             <form
                 className="login-form"
@@ -122,8 +127,8 @@ function Login({ setIsLoggedIn }) {
                 }
 
             </form>
-
         </div>
+            </>
     );
 }
 
